@@ -1,0 +1,68 @@
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
+from sklearn.ensemble import RandomForestClassifier, 
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error, classification_report
+from sklearn import svm
+from sklearn.metrics import confusion_matrix
+from sklearn.inspection import plot_partial_dependence, permutation_importance
+import seaborn as sns
+import matplotlib.pyplot as plt
+from dtreeviz.trees import dtreeviz
+from sklearn.svm import SVC
+from sklearn import metrics     
+from sklearn.neighbors import KNeighborsClassifier
+%matplotlib inline
+
+x_train_class, x_test_class, y_train_class, y_test_class = train_test_split(X, y_class, random_state=100, test_size=0.33
+# X contains explanatory variables and y_class is objective variables
+
+model = KNeighborsClassifier(n_neighbors=6)         
+model.fit(x_train_class, y_train_class) 
+
+predicted_two_class = model.predict(x_test_class) 
+acc=metrics.accuracy_score(y_test_class, predicted_two_class)
+print("acc=",acc)
+
+plt.figure(figsize=(7, 7))
+cm_two_class = confusion_matrix(y_test_class, predict_two_class)
+cm_two_class = np.flip(cm_two_class)
+# cm = np.insert(cm, 6, 0, axis=0)
+# zero= np.array([0, 0,0,0,0,0,0]).reshape(7,1)
+# cm = np.append(cm, zero, axis=1)
+cm_two_class = pd.DataFrame(data=cm_two_class, index=["≤ 15dB", "> 15dB"], 
+                           columns=["≤ 15dB", "> 15dB"])
+plot = sns.heatmap(cm_two_class, square=True, cbar=True, annot=True, cmap='Blues')
+plt.title('Machine Learning Model (kNN)',  fontsize=20)
+plt.xlabel('Predicted AB gap', fontsize=14)
+plt.ylabel('Postoperateve AB gap', fontsize=14)
+plt.xticks(rotation=0)
+plt.yticks(rotation=0)
+
+x_2_train, x_2_test, y_2_train, y_2_test = train_test_split(X, y_rank, random_state=0, test_size=0.33)
+# X contains explanatory variables and y_class contains classification of outcomes("≤ 0dB", "≤ 10dB", "≤ 20dB", "≤ 30dB", "≤ 40dB", "≤ 50dB", "≤ 60dB")
+
+model = KNeighborsClassifier(n_neighbors=6)                
+model.fit(x_2_train, y_2_train) 
+
+predicted = model.predict(x_2_test) 
+acc=metrics.accuracy_score(y_2_test, predicted)
+print("acc=",acc)
+
+plt.figure(figsize=(7, 7))
+cm = confusion_matrix(y_2_test, predicted)
+cm = np.insert(cm, 5, 0, axis=0)
+zero= np.array([0, 0,0,0,0,0]).reshape(6,1)
+cm = np.append(cm, zero, axis=1)
+cm = np.insert(cm, 6, 0, axis=0)
+zero= np.array([0, 0,0,0,0,0,0]).reshape(7,1)
+cm = np.append(cm, zero, axis=1)
+cm = pd.DataFrame(data=cm, index=["≤ 0dB", "≤ 10dB", "≤ 20dB", "≤ 30dB", "≤ 40dB", "≤ 50dB", "≤ 60dB"], 
+                           columns=["≤ 0dB", "≤ 10dB", "≤ 20dB", "≤ 30dB", "≤ 40dB", "≤ 50dB", "≤ 60dB"])
+plot = sns.heatmap(cm, square=True, cbar=True, annot=True, cmap='Blues')
+plt.title('Machine Learning Model (kNN)',  fontsize=20)
+plt.xlabel('Predicted AB gap', fontsize=14)
+plt.ylabel('Postoperateve AB gap', fontsize=14)
+plt.xticks(rotation=0)
+plt.yticks(rotation=0)
